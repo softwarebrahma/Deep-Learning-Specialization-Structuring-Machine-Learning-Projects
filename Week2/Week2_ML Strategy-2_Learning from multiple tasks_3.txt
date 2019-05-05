@@ -1,0 +1,94 @@
+
+Transfer learning:
+
+One of the exciting developments in Deep Learning is that we can take the knowledge that a neural network has learned on a problem/task and apply/transfer/adapt that fully or partially to another problem/task to help speed up the model development on the second problem/task or when the second problem/task has much less data for training than the first one. This process of adapting/transferring a trained neural network for another problem/task is called Transfer Learning.
+
+For example if we have a neural network trained on image recognition to recognize some object, we can transfer/adapt that to build a radiology diagnosis classifier.
+
+The reason this kind of adapting/transferring works is because a lot of the basic learning of low-level features involved in the initial layers in terms of recognizing various features like the edges, curves & other general structure details of an image can be adapted from a pre-trained model and fine-tuned for another related similar problem/task of X-Ray diagnosis classifier.
+
+In order to do this we need to do the below,
+
+1. Take a pre-trained neural network & remove its final output layer along with the parameters feeding into it.
+
+2. Swap the previous training set (X, Y) with the new training set for the problem/task to be adapted to.
+
+3. Random initialize the parameters for the final output layer and depending on the size of the data set for the problem/task being adapted to,
+	- If the data set size is large enough retrain the whole neural network (all the layers parameters) on the new data set.
+	- If the data set size is not large enough (small) retrain only the final output layer parameters on the new data set.
+	- Note that, it may not always be just the output layer, in many cases we might add a few additional hidden layers & therefore correspondingly random initialize the parameters for those layers & train as mentioned above.
+	- If we retrain all the parameters in the network, then the initial neural network training is called the pre-training & when we train & update the parameters with the new data set its called fine-tuning. 
+	
+Transfer Learning is most useful in the setting where we have less training data for the problem/task of being adapted to than the problem/task being adapted from on which the model has been trained on. Its not useful the other way around because the value of each training example for the problem/task being adapted from is much less from the perspective of the problem/task being adapted to.
+
+In summary what we do in Transfer Learning is learn a problem/task and then transfer/adapt part or all of the knowledge to learn another related problem/task for which we have much less training data & want to perform well on. This works because many of the low-level features & components learnt for the previous problem/task are useful & can be reused for the new problem/task as-well without having to learn it again on the smaller data set which may not be possible or efficient. This then results in the neural network learning faster & performing well on the new problem/task despite having much less data to train on.
+
+Now when does Transfer Learning work best or make sense?
+
+If we are trying to learn from a task A and transfer/adapt some or all of the knowledge to learn another task B, then the below needs to be true for Transfer Learning to work best,
+
+1. Task B has the same inputs X as task A.
+	- Eg: Image Recognition based cat classifier adapted to Image Recognition based radiology diagnosis classifier, Speech Recognition based transcriber adapted to Speech Recognition based voice activated wake word classifier
+	- In both the above cases the inputs X was Image & Speech respectively (Y was cat/non-cat label & transcribed text respectively which we adapted to X-Ray medical positive/negative diagnosis & wake word/not-wake word label).
+
+2. Task A has a lot more training data than task B & we want to perform well on task B.
+	- There needs to be lots more data for task A because the value of each training example is much less from the perspective of task B to do well on it. The other way around may not hurt, but may not help either.
+
+3. Low-level features learned for task A can be useful to learn task B.
+	- Since the data for task B is much less the network learns a lot of the basic components & low-level features needed for the task from the related but different task A for which we have lots of data. It then reuses the task A pre-trained neural network & fine-tunes it for task B by re-training it on task B data to directly learn the high-level features needed to perform well on it.
+
+
+===========
+
+Multi-task learning:
+
+As opposed to Transfer Learning, which is a sequential process where we learn from a task & transfer the knowledge to another task, with Multi-task learning we start off simultaneously having a single NN learn multiple tasks in parallel & each task hopefully helps all others.
+
+With multi-task learning we assign multiple labels to each training example in X. Each label/class corresponds to a task that the model will learn. So each label y in multi-task learning is a vector with as many dimensions as the tasks/classes.
+
+Taking the example of Image Object Recognition based Self Driving Car example we might have each input image having one or more of the below objects in it & our goal is to build a multi-task learning based neural network that can recognize the below various objects being trained on in the image,
+	- Car
+	- Pedestrian
+	- Stop Sign
+	- Traffic Signal
+
+The label vector for each image will in this case be a four dimensional one ((4,1)), with each class being 1 or o to indicate presence or absence of the corresponding object.
+
+To implement multi-task learning we build a neural network with the final output layer having as many units as the number of classes/tasks being learnt which will then provide the prediction yhat. In this case we will have the network output 4 units.
+
+We then define the Cost Function in order to train the network to minimize the cost & thereby learn the different tasks/classes. Its defined as follows,
+
+J = 1 / m * np.sum ( np.sum( L(yhat, y) ) )
+
+Where, the Logistic Loss, L(yhat, y) = - np.multiply( y, np.log(yhat) ) - np.multiply( (1 - y), np.log(1 - yhat) )
+
+The inner sum sums over the all the C classes/prediction losses (in the above case it will be 4) & the outer sum sums over it for all the training examples & divides by m (the total number of training examples) in order to compute the average over all the examples.
+
+Note that this is different from the Logistic Regression, Binary Classifier in that we do not perform the inner sum over all the classes (binary classifier has only 1 class).
+
+Note also that this is different from Softmax Regression, in that unlike with Softmax Regression where we assign one label to each training example with Multi-task classifier we assign (& predict) multiple labels to each training example. So the network is not trying to just classify one of several classes at a time, instead it tries to classify several classes at the same time. In the above example we are not trying to detect only Car or Pedestrian or Stop Sign, etc instead we try to detect each of them in the image.
+
+When we train this way & minimize the above Cost Function we are doing Multi-task learning. This works better than training a network separately for each task/class because a lot of the initial low-level features can be shared when learning the tasks & thereby improve performance.
+
+One advantage with multi-task learning is that we can use it even with partially labeled data where we could have the y vectors having some of labels missing (?). Taking the example above we could have the y vectors missing the 0/1 labels for either Car or Pedestrian, etc or different sets of them each labeled only for Car, Pedestrian, etc with the others not marked as 0/1. The way we do this is by skipping the dimensions not labeled when we perform the inner sum over all the C classes.
+
+
+So when does Multi-task Learning work best or make sense ?
+
+If we want to use Multi-task learning to train a single neural network to learn several tasks simultaneously the below three conditions need to hold true,
+
+1. Training on all the tasks could benefit from having shared low-level features
+	- The low-level features learned in the initial layers could be shared when all the tasks need them individually. Taking the above example recognition of Car, Pedestrian, etc could each benefit from learning about the road in general as each recognition task individually needs to learn that before recognizing the object.
+
+2. Usually: The amount of training data available for each task is quite similar & the aggregate amount of data for all the tasks is much larger than the data available for each task separately.
+	- This again is not strictly applicable in cases. But in general when we are learning lots of tasks & each have a smaller data set individually each individual task if trained only on its data may not do as well as training on the combined data set since with the more aggregate data from all the tasks the performance will be much better on each task.
+	- This differs from Transfer Learning where we benefit from learning on a task with lots of data by applying or transferring the knowledge to another task with much less data to enable much better performance despite the limited data on the second task.
+	
+3. We can train a big enough neural network that can learn & perform well on learning all the tasks.
+	- Its been shown that Multi-task learning can perform worse than training individually if not used with a big enough network. So using a big enough network is required.
+
+
+So to summarize, multi-task learning enables you to train one neural network to do many tasks and this can give you better performance than if you were to do the tasks in isolation.
+
+Multi-task learning is in general not used as much as Transfer Learning since there are not a lot of use cases where we have lots of tasks to learn that can benefit from learning in parallel, except cases like Computer Vision Image Object Recognition (used as example here).
+

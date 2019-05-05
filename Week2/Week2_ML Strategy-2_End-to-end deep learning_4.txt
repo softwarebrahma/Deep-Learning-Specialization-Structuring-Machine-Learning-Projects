@@ -1,0 +1,109 @@
+
+What is end-to-end deep learning?:
+
+One of the most exciting new developments in Deep Learning is end-to-end deep learning. A lot of traditional Data Processing Systems or Learning Systems require a sequential, pipeline like series of processing stages to work. End-to-end deep learning however replaces this pipeline or series of processing stages usually with a single neural network that performs the processing.
+
+For example we can look at Speech Recognition based Audio Transcriber which when given an audio input outputs its transcript.
+
+Traditionally this system was built as series of processing steps/stages like a pipeline as below,
+
+		  MFCC			  ML
+Audio (X) ====> Features ====> Phonemes ====> Words ====> Sentences/Transcript (Y)
+
+With end-to-end deep learning this has been replaced with a single big neural network that directly learns the function mapping audio to its text and accepts an audio input & outputs the transcript of it.
+
+Audio (X) ==============================================> Sentences/Transcript (Y)
+
+However one of the challenges with end-to-end deep learning is that it requires a lot of training data to learn/train & work or perform well. So only in settings where we have big data sets that end-to-end deep learning becomes feasible & better than traditional pipeline based systems.
+
+For example if we have only 3000 hours of audio (small data set) to train to build a transcriber then the traditional pipeline based system is a better choice & would perform at & better than an end-to-end deep learning system. However if we have 10,000 to 100,000 hours (large data set) of audio then end-to-end deep learning is a better choice & would perform much better. If we have data sets of intermediate sizes we can go with taking partial end-to-end deep learning route by directly going to the Phonemes from the Audio & then proceed with the rest of the processing.
+
+Audio (X) ====================> Phonemes ====> Words ====> Sentences/Transcript (Y)
+
+Also there are other cases where breaking into separate sub-tasks can perform better than an end-to-end deep learning system. For example Image Object Recognition based Face Detection enabled turnstile entry. Here we could build an end-to-end DL system that takes in an image of a person at the turnstile, X & recognize if its an authorized person (Y) before allowing entry. But this will not work well because a person could stand in a multitude of different ways at angles, closer, farther, etc that to train a model we need too much data that is not feasible to get & process. Instead in such cases we could break it into 2 sub-tasks one task to recognize the face (Face Recognition) & the other to classify if the face is authorized or not (match based on its training on authorized faces data set). Since individually both the sub-tasks have lots of training data separately this 2 step approach performs much better. 
+
+The reason this performs better is that, one, the two sub-tasks are much simpler, and two, they both have lots of training data individually/separately. So when we do not have enough data for the end-to-end deep learning problem  but breaking it down into smaller sub-tasks provides enough data for each separately then breaking into a multi-step approach works better although if we have enough data for the end-to-end deep learning problem it would work better.
+
+Another example where end-to-end deep learning system performs much better is Machine Translation where given a sentence say in English as input the translator outputs the French translation.
+
+Traditionally this was done as a series or pipeline of multiple processing stages,
+
+English Sentence (X) ====> Language Analysis/Feature extraction ====> ..... ====> French translation (Y)
+
+With end-to-end deep learning this can be simplified with a single neural network that maps from English sentences to French translation,
+
+English Sentence (X) ===========================================================> French translation (Y)
+
+The reason this works better again is because we have lots of training data as X, Y pairs of sentences that we can train on to build the end-to-end NN.
+
+One contrasting example where end-to-end deep learning may not yet work as well is Image Recognition based Radiological Child Hand Image based Chile Age Prediction System. 
+
+Child Hand X-Ray (X) ====> Bone Segments ====> Child Age (Y)
+
+Here we do not have enough data to learn the end-to-end deep leaning problem of recognizing child age from child hand x-ray image. However if we take a multi-step approach as before and break it into 2 steps as above then this system works much better because individually both have enough data to train & perform well on.
+
+In summary,
+
+	- End-to-end deep learning is the simplification of a processing or learning systems into one neural network. 
+	
+	- End-to-end deep leaning simplifies complex multi-step or multi-stage processes by replacing many hand designed processes & replacing it with a single neural network that performs more efficiently. 
+	
+	- However it may not always work.
+
+
+===========
+
+Whether to use end-to-end deep learning:
+
+When building a machine learning application if we are considering building it with end-to-end deep leaning we need to understand the pros & cons of end-to-end deep leaning systems. We can then come up with some guidelines on whether to go ahead with end-to-end deep leaning route or not for any given problem.
+
+Pros of End-to-end Deep Learning:
+
+1. It really lets the data speak. If we have enough training data (X, Y) then whatever is the appropriate mapping function that maps X to Y, as long as we train a big enough network it will figure it out & learn it. So if we go with the pure machine leaning approach as with end-to-end deep leaning, the network is able to better capture the patterns & statistics in the data than it would when forcing it to learn human preconceptions or representations as with pipeline like systems.
+
+	- For example, with Speech Recognition when we use the end-to-end approach we do away with the intermediate processes like Phonemes, etc that was used before. By letting the neural network build its on representations for the mapping function from X to Y rather than forcing it to use human representations the network learns much more efficiently.
+	
+2. Lessens the need for Hand Designed Components. With end-to-end deep leaning we no longer have to hand design features & intermediate representations to help the model learn as before. This simplifies the design process & makes it easy.
+
+	- For example, with Speech Recognition we do away with hand designed features/feature extraction, Phonemes, etc & build a single NN that maps directly from Speech to Transcript.
+
+
+Cons of End-to-end Deep Learning:
+
+1. Might need lots of Training Data to work well. As we saw earlier, since end-to-end deep learning involves building a neural network that becomes the end-to-end system where it maps directly from one end of the system as input to the other end of the system as output we need lots of training data that helps solve this end-to-end problem. 
+
+	- So as we saw earlier in cases where a problem's component sub-tasks have more training data individually than the end the end-to-end problem, it might be better to take a multi-step approach & solve it rather than go with an end-to-end approach.
+
+2. Excludes potential benefits from or potentially useful Hand Designed Components.
+
+	- In general when there is not a lot of training data the ML algorithm may not have a lot of insight on the data or the pattern in the function mapping X to Y, in such cases Human hand engineering is a way to infuse/inject knowledge/insight to the ML algorithm. But as we get a lot of training data this becomes much less important or needed and as we saw earlier with Speech Recognition example where we saw that it may even be detrimental to the performance by virtue of forcing the learning of human representations which may not be optimal.
+
+	- More generally stated, we can say that an ML algorithm has two sources of Knowledge/Insight. One is the Data and the other is the Hand Designed Components (Features, Intermediate Representations, etc). Therefore the bigger the data set we have the lesser the need for hand designed components & the smaller the data set the more important hand designed components become.
+
+
+So when should one employ end-to-end deep leaning?
+
+The key question to ask is, would there be sufficient data to learn a function of the complexity needed to map from X to Y.
+
+	- As we saw in the case of Child Hand X-Ray Image based Age Detection problem, the function that is needed to recognize the bones in the X-Ray image is a simpler function that can be trained with the available data & similarly the function that maps bones to child age is also a simpler function that can be trained with available data whereas the direct end-to-end function mapping from the X-Ray image to the child age is a complex function that may need a lot of direct end-to-end training training data if we are to train on an end-to-end deep leaning neural network to learn it.
+	
+	- Similarly with the Image Recognition based turnstile problem, the function that is needed to directly map from the image to the identity of a person is a much more complex function that will need lots of end-to-end training data to learn than the broken down sub-tasks of Face Recognition & Identity Detection which both are simpler functions needing lot less training to learn which is available.
+
+Taking a more concrete example of Self Driving Car, this is not currently built with end-to-end deep learning instead it uses the multi-step approach as below,
+
+		DL				Motion Planning				Control
+Images		People							Route				Steering
+Radar		Car
+Lidar		Stop Signs
+
+In this case we use DL for the first components to recognize People, Car, etc from sensors, images, etc. For the rest of the tasks we use other software like Mission Planning & Control.
+
+We do not use an end-to-end approach here because we do not have the data or a big enough model to learn a direct mapping from sensors/images/etc directly to steering/driving.
+
+
+So the take away is that when building a complex machine leaning system,
+
+1. Use machine/deep leaning to learn & build systems for individual components of the problem.
+
+2. When using Supervised Learning to learn components choose the functions mapping X to Y to learn carefully based on tasks for which we have or could get lots of training data to train.
+

@@ -1,0 +1,99 @@
+
+Carrying out error analysis:
+
+When building a model for a problem/task that humans do well on, if the model is not performing yet at human-level then manually analyzing/examining the errors that the algorithm did can provide insight into next steps to improve the model's performance. This process of manual analysis is called as Error Analysis.
+
+To take an example, let's say your cat classification model has 90% accuracy or 10% error in other words in the dev set & you want to improve performance. You notice that its mis-classifying some dogs as cats & you want to see if you need to make changes to your evaluation criteria or add more dog images to the data set to train your model so as to do better at classifying dogs. Before proceeding its always better to perform Error Analysis.
+
+Step 1 : Take let's say ~100 or so images (training examples) from the dev set that the model classified incorrectly (error)
+Step 2: Manually count how may of them were dog images.
+
+Let's say when you count you get 5 images which is 5% of the errors ( 5 / 100). Now you know, even if you work to optimize the model for dogs, your improvement is only 5% and will only go from 10% error to 9.5% error. On the other hand if your count comes as 50 images which is 50% of the errors, then you have clear data that if you work to optimize the model for dogs, your improvement will be 50% & the model error will come down to 5% from 10%.
+
+This method of computing the upward limit for performance is called Ceiling. So in the above in first case the ceiling was only 5% while on the second its 50%.
+
+Thus by performing this analysis you save time & get insight into what next steps are worthy to pursue and what to drop.
+
+That was about evaluating a single idea before proceeding. Similarly we can also use Error Analysis to evaluate multiple ideas in parallel and also discover new ideas/categories to pursue while in the process of error analysis.
+
+To take similar example lets say we have ideas to improve performance on these 3 categories,
+1. Improve on dog mis-classification
+2. Improve on Big cats mis-classification
+3. Improve on performance in low resolution images
+
+Before proceeding on it we need to do Error Analysis to understand the Ceiling of performance improvement from each & then decide on the course of action. For that we prepare a table with the 100 or so examples as rows & each category (corresponding to the idea above) as column along with a Remark column to qualify the analysis. Then while manually classifying each & writing remarks we may be realize that for example there are images with instagram or facebook filters that are also among the mis-classifyed ones so we can then add that also as a fourth or fifth category and then at the end of the process we will get a count of errors in each of the categories. With this, by knowing the Ceiling, we can better decide which one(s) to work on.
+
+In summary, in Error Analysis we work with the errors of a model in the Development Set by picking a random set of examples from the dev set that were erroneously classified. We then proceed to count the False Positives and False Negatives & count the errors under each category corresponding to the idea we want to evaluate. If we find new categories in the process we add them. Then based on the sum of errors under the different categories & as a consequence knowing the Ceiling of performance improvement for each (fraction of the different categories under the erroneous examples) we make informed choices on what to do next to improve performance of the model.
+
+
+=========
+
+Cleaning up incorrectly labeled data:
+
+For the Training Set, since deep learning algorithms are quite robust to random errors in the data set, as long as the incorrectly labeled data in the data set is random or close to random we may not need to do anything about it. Its only if the incorrect labeling is more systematic that we need to go in & fix it (although fixing wouldn't hurt if its really needed in both cases). 
+	- For example, using the previous dog classification, if every image of a type of dog is labeled as a cat in the data set which is systematic versus only a small random number of them being labeled as cat.
+
+For the Development or Test Set, if the incorrectly labeled data is going to significantly affect the ability to the use data set to evaluate models then we need to fix it. If its not going to make a significant difference to the ability to evaluate models on the dev/test then we can save time & resource to focus on other performance improvement areas. Below is what this means,
+
+First, as part of the Error Analysis process explained earlier we need to add another category/column, "Incorrect Labeling" & capture the fraction of the dev/test errors that are due to incorrect labeling along with the usual other categories (corresponding to the improvement ideas). 
+
+Then to decide whether or not to take action to go in & fix the errors we need to look at the below three numbers that will provide the Ceiling of performance improvement,
+
+1. Overall Dev/Test Error Percentage
+2. Percentage of Errors due to Incorrect Labeling
+3. Percentage of Errors due to Others
+
+For example taking the previous example, 
+
+The dev set error is 10% & let's say from Error Analysis, the incorrect labeling category is 6% with the others being 94%. Then the ceiling of improvement on the 10% dev errors for incorrect labeling is just 0.6% while for others its 9.4%. Clearly, its worth focusing on the others.
+
+Now, if for example we improve model performance & got the dev set error down to 2%. Now, since its incorrect labeling its value would be still be 6%. Now the ceiling of improvement on the 2% errors for incorrect labeling is 0.6 (30%) while for the others its 1.4 (70%). 
+
+Now if we have to evaluate between two models with 2.1% & 1.9% errors on the dev set we can't rely on the dev set since the errors from incorrect labeling have a bigger influence on the estimate of errors in the models. Given that the purpose of dev set is to help evaluate between models A & B in order to choose one, we need to fix the dev set for it to be useful.
+
+Now if we decide to correct/clean up the incorrectly labeled data following are the things to keep in mind,
+
+1. Apply the same process of cleaning up/correction to both the Development AND Test Sets in order to make sure that they continue to come from the same distribution. As explained earlier the dev & test sets need to come from the same distribution.
+
+2. Consider examining BOTH the examples that the model got wrong (from error set) and the examples that it got right. This is to make sure that we don't get biased estimates of the model's errors since its possible that the model got some examples right by accident because the corresponding labels were also wrong & when we fix the labeling it becomes part of the error set.
+
+3. Since the dev/test test are almost always smaller than the training set we may or may not apply the same cleaning up process to the training set. This then results in the training set having a slightly different distribution than the dev/test sets. This may be okay since deep learning algorithms are quite robust to this.
+
+Couple of things,
+
+1. Hand Engineering & Human Intuition are very important in applied ML, so don't hesitate to understand the data & apply learned intuition.
+2. Time spent on Manual Error Analysis is worth the effort in making informed decisions on next steps, so don't avoid it.
+
+
+==========
+
+Build your first system quickly, then iterate:
+
+If you are building a brand new ML model/system on a new application domain its recommended to build a first system quickly & then iterate to improve. Below is what this means,
+
+Step 1 : Setup Development & Test Sets and Evaluation Metric(s)
+	- Define/Set up the target.
+
+Step 2 : Build an initial system quickly
+	- Setup the Training Set, Train & Fit the parameters/weights of the model on the Training Set.
+	- Tune the parameters/weights of the model on the Development Set.
+	- Asses/Evaluate the performance of the model on the Test Set.
+
+Step 3 : Use Bias-Variance Analysis and Error Analysis to prioritize next steps
+	- Bias & Variance Analysis process described earlier can be used to systematically improve the performance of the model.
+	- Manual Error Analysis process described above can be used to evaluate which of the improvement ideas to pursue.
+
+When building a new ML model for a problem/task for the first time there are a lot different areas or aspects within it that one can focus on that one might end up over-thinking & trying to build an overly complex system that may either not perform well or take too long to come out.
+
+Building an first system quickly helps in such cases because an initial system lets us perform Bias-Variance analysis & Error analysis that provides us inputs on what to focus on next. Defining the dev/test test & metrics helps us with a start where upon we can always go back & change it when we learn more from the Bias-Variance & Error Analysis. Specially Error Analysis provides us with the crucial improvement ideas that are worth pursuing instead of blindly trying to attack them without a quick & dirty model.
+	- Eg: Speech recognition where we can focus on techniques for Background noise reduction (Car, Room), Far field communication, Accent communication, Children's communication, Stuttering, etc. But if we build an initial model & on performing Error Analysis we see that most errors are more say Far field communication we can then focus on that aspect only at that point.
+
+This advice is less applicable in two cases,
+
+1. You already have significant experience with the problem/task & the domain & need to use your expertise.
+2. The problem/task is already well studied with a large body of academic literature to capitalize on.
+
+In the above two cases it might pay to start with a reasonably advanced/complex model from the get go.
+
+But in all other cases when building a new ML model for an application its always better to setup dev/test sets & metrics, build a first system quickly, use that to do Bias-Variance & Error Analyses & use those analysis inputs to prioritize what to do next.
+

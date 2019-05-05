@@ -1,0 +1,79 @@
+
+Ruslan Salakhutdinov interview:
+
+Contrastive divergence
+
+Restricted Boltzmann machine
+
+Unsupervised pre-training
+
+Autoencoders
+
+Non-linear extension of PCA
+
+Very deep autoencoders
+
+Deep Boltzmann Machines
+
+Variational Bound
+
+Directly optimizing deep neural networks - Basically just standard backprop without the pre-training of the Restricted Boltzmann Machines
+
+RBMs & DBMs can be thought of as generative models - They model complex distributions in the data.
+
+Learning algorithms require using Markov Chain Monte Carlo & Variational Learning which were not as scalable as backpropagation algorithms.
+	- Yet have to figure out efficient ways of training these models.
+	- Use of Convolution makes it difficult to integrate
+	- Probabilistic Max Pooling for building these generative models of different objects & using these ideas of convolution
+
+
+Variational Encoders - Can be viewed as directed versions of Boltzmann Machines
+	- training - Reparameterization tricks
+		- Now we can use backpropagation within the stochastic system
+	- We haven't figured out how to do it in the case of Boltzmann Machines
+	
+
+Earlier era where computers were slower that the RBM pre-training was really important, its only in the faster computing that drove switching to standard backprop.
+
+So that was actually a very important insight that in an earlier era of deep learning where computers where just slower, the Restricted Boltzmann Machine and Deep Boltzmann Machine that was needed for initializing the neural network weights, but as computers got faster, straight backprop then started to work much better.
+
+===
+
+In terms of the evolution of the thinking in deep learning,
+
+Generative Unsupervised Vs Supervised approaches basically Supervised Learning Vs Generative Models, Unsupervised Learning Approaches
+
+Unsupervised, Semi-supervised or generative models
+	- Success till now is due to supervised learning.
+	
+If u have lots & lots of unlabeled data & a small fraction of labeled data, these unsupervised pre-training models of building these generative models can help for supervised eyes.
+
+Generative modeling - Generative Adversarial Networks (GANs), Variational Autoencoders, Deep Energy Models
+	- Unsupervised Learning, lots of progress to be made (Semi-supervised above case), Unlabeled data hasn't been figure out yet (lots of annotations are in progress).
+	
+Research Vs Applied Work
+
+Code the Backpropagation Algorithm for Convolution Neural Networks
+	- Painful but worth & learn how they work & how to efficiently implement them on GPU.
+
+Two areas,
+
+Deep Reinforcement Learning
+	- Another exciting area for future research
+		- We were able to figure out how we could train agents in virtual worlds, how to scale?, how can we develop new algorithms, how can we get agents to communicate with each other
+			- Generally in settings where you interact with the environment.
+			
+Reasoning and Natural Language Understanding
+	- Can we build dialogue based systems?, systems that can reason, that can read text & be able to answer questions intelligently
+	- Sub area
+		- Being able to learn from fewer examples
+			- Think of One-shot learning or Transfer Learning
+				- Where u learn something about the world & then i throw some task at u & u do it quickly much like humans without needing lots & lots of labeled training examples, how to get close to human like learning ability.
+
+
+
+
+
+
+
+	

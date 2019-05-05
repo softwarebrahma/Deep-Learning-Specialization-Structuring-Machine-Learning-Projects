@@ -1,0 +1,141 @@
+
+Why ML Strategy:
+
+Strategy is needed to analyze the machine learning problem & figure out which of the improvement ideas are worth pursuing & which ones can be safely discarded.
+	- Strategy refers to the ways to analyze a machine learning problem
+
+Orthogonalization:
+
+Refers to knowing what to tune to achieve what effect in a clear interpretable manner.
+
+When applied to machine learning below is the high level idea of separation of goals or orthogonalization (below 4 needs to true & orthogonal),
+
+Fit training set well on Cost Function
+	- If training set is not fit well the there are knobs or methods to take specifically for that (underfitting the data)
+		- Train a bigger network
+		- Train longer
+		- Train using one of th advanced optimization algorithms like Adam
+		- For some applications this might mean achieving comparable human level performance
+
+Fit dev set well on Cost Function
+	- If dev set performance is not good then there are knobs or methods to take specifically for that (we are not generalizing well to the dev set)
+		- Perform Regularization.
+		- Train using a bigger training set.
+		- ..
+
+Fit test set well on Cost Function
+	- If test set performance is not good then there are knobs or methods to take specifically for that (we are overfitting the dev set)
+		- Train using a bigger dev set.
+		- ..
+
+Perform well on production
+	- If the production or field performance is not good then there are knobs or methods to take specifically for that (either the dev set & test set distribution is incorrect or the cost function is not measuring the right metrics)
+		- Change the dev set
+		- Change the cost function
+
+
+Early stopping, where we stop the training early in the training set in order to improve dev set performance is not a good idea since we are trying to do step 1 & 2 above in parallel and the aspect of orthogonalization where our tuning methods are interpretable is lost.
+
+
+=======
+
+Single number evaluation metric:
+
+Whether we are tuning hyper parameters or trying out different optimization algorithms or simply trying out different ideas for our ML algorithm it always helps to have a single real number evaluation metric to help choose among the different options. So when starting a project it is always recommended to setup a single real number evaluation metric.
+
+This is because since applied ML is an iterative process involving idea, code & experiment cycle it helps to fasten this process by speeding up the iterations. In order to do this & to quickly choose between different model choices its necessary to have a well defined Development Set (dev set to compare the single real number evaluation metric among the choices) and a Single Real Number Evaluation Metric.
+
+One example used in ML is F1-Score or F Score which uses a Harmonic mean of Precision & Recall to compute the F1-Score (eg: cat classifier),
+
+	- Precision (P) is defined as, of the examples classified as class A from the data set what percentage are actually class A.
+	
+	- Recall (R) is defined as, of all the actual class A examples in the data set what percentage were correctly classified as class A.
+	
+	- F1-Score is calculated as harmonic mean of P & R as opposed to mathematical average since it helps with the precision-recall trade offs,
+	
+		2 / ( ( 1 / P ) + ( 1 / R ) )
+		
+Thus when comparing say 2 or more different models with different P & R scores on the Development Set, having a F1-Score computed & used as a single real number evaluation metric helps easily choose between them.
+
+
+Another example is when choosing between models based on scores from different data sets / indicators (eg: cat classifier error scores on different geographical data sets),
+
+	- Again since each model has multiple scores, comparing between multiple models is not straight forward.
+	
+	- Again we take the average of the scores on the different data sets / indicators & use that as a single real number evaluation metric to choose between them.
+
+	
+======
+
+Satisficing and Optimizing metric:
+
+Its not always possible to have a single metric as there may be a lot of metrics that we might need to use to evaluate models & these are called Evaluation Metrics. In such cases its recommended to set up Optimizing and Satisficing Metrics.
+
+An Optimizing metric is one on which we we need to maximize the performance while a Satisficing metric is one on which we need to perform better than a defined threshold or criteria.
+
+Then for the N Evaluation Metrics its recommended to choose 1 as Optimizing Metric and N-1 as Satisficing metrics.
+
+With this we can now almost automatically choose between models with multiple evaluation metrics.
+
+For example, if we have a classifier for which we want to evaluate models based on both F1-Score/Accuracy and Running Time, we should choose models based on below evaluation criteria,
+
+Maximum F1-Score/Accuracy, subject to/as long as Running Time is <= 100 ms. So F1-Score/Accuracy is the Optimizing metric & the Running Time is the Satisficing metric.
+
+
+Similarly for a Wake words classifier (used in smart phones) if we want to evaluate models based on both Accuracy & False Positives, we should choose models based on below evaluation criteria,
+
+Maximum Accuracy, subject to/as long as False Positives <= 1 per day. So Accuracy is the Optimizing metric & the False Positives is the Satisficing metric.
+
+Now its important to note that these metrics may need to be evaluated on the Training, Development & Test sets.
+
+
+======
+
+Train/dev/test distributions:
+
+The way you set up your train, dev & test sets could have a major impact on the efficiency of the ML process.
+
+In ML the typical work flow is that you try out a lot of different ideas as models & train them on the training set and then evaluate them on the dev set to pick one, and continue to iterate & improve the dev set performance until you get a model that you think performs the best which you then evaluate on the test set for accuracy. 
+
+Now with the above work flow it is not only important to have single real value evaluation metric but also a well chosen dev & test set to use to evaluate the models against the metric. Below is guideline to keep in mind,
+
+1. Choose the data for the dev & test sets to reflect the data that you expect to get in the future & that which you consider important to perform well on.
+
+2. Make sure the dev & test sets come from the same distribution above & that they are chosen at random after shuffling from the entire distribution.
+
+The reasoning for the above is that given the above ML work flow where a team works to optimize on the dev set with the single real value evaluation metric if the dev set doesn't come from the same distribution as the test set then the algorithm will not perform well on the test set. Similarly, if they don't contain data that you expect to get then the algorithm will not perform well.
+
+How the training set is chosen can also impact how well the model performs on the dev set to help the above. This will be discussed later.
+
+
+======
+
+Size of the dev and test sets:
+
+In the modern big data & deep learning era the old thumb rule of 70% / 30% distribution for training & test sets or 60% / 20% / 20% distribution for training, dev & test sets no longer apply. This is because in the modern era the size of the datasets are huge & much more bigger than before. Also most modern deep learning algorithms are hungry for training data & perform better with more & more data. So training set takes more & more percentage of the data & dev/test tests take on a much smaller percentage.
+
+Thus currently the better efficient distribution of data is 98% for Training Set & 1% each for Development & Test Sets.
+
+For example if data set size is 1 million, then 1% is still 10,000 which is a reasonable size for a dev & test set.
+
+Dev set size : Size of the dev set needs to be big enough to detect differences in the algorithms/models that are being evaluated so that it can be used to evaluate between them & choose one over the other. Since the purpose of the dev set is to tune.
+
+Test set size : Size of the test set needs to be big enough to provide a high level of confidence on the overall performance of the final model/system. Since the purpose of the test set is to provide an unbiased estimate of the overall performance of the model for some applications it may be okay to not have a test set although its not recommended. Only in some rare cases where for example if the size of the dev set is big enough for the model to not overfit it its okay to skip the test set & have a only train & dev sets. As long as you are training on a set & iterating/tuning on another set without worrying about overall performance we can call the second set as the dev set & skip a separate test set.
+
+
+======
+
+When to change dev/test sets and metrics:
+
+In some cases we might that we might need to change the dev/test set distribution and/or evaluation metrics half way though the model. Below are the cases,
+
+1. If you find that the evaluation metric is no longer or does not provide a correct ranking based on preferences between models (does not correctly rank order models based on preferences post evaluation) then it might be time to change the evaluation metric & define a new one that that correctly captures the preferences needed for the application (or change dev/test distribution) rather than running with the incorrect one.
+	- For example assume we have a cat classifier where we choose classification error as the evaluation metric & get two models where on evaluation on the dev/test set it picks one. Now we see that this one incorrectly classifies porn as cat images while the one ranked lesser does not. Then clearly our evaluation metric does not correctly rank the two models. The solution is to change the classification error metric to add a weight to it & normalize for it so that when it classifies a porn as a cat it incurs a higher error.
+
+2. If you find that a model performs well with the evaluation metric on both the dev AND test sets as compared to another model but does not correspond to performing well on the application/deployment where the second performs better then it might be time to change the dev/test sets to better reflect the data that you expect in the application on which you want to perform well on (or change the evaluation metric).
+	- For example assume we have cat classifier that we evaluated with high quality dev/test set pictures and got two models with one performing better than the other based on the metric & dev/test tests but on the application/deployment the other performs better then in this case the solution is to change the dev/test sets to have low quality or blurry pictures that you expect to get on the application/deployment & evaluate on them.
+
+The point to note here is that we treat how to define an optimal evaluation metric to correctly evaluate models based on preferences on separately without worrying about how to actually perform well on that evaluation metric. We treat the latter as separately with its own actions/steps like changing the classification error function in the above example. This is another example of Orthogonalization where we look at a machine learning problem as separate orthogonal steps & solve them.
+
+In summary, its important to have a dev/test set distribution AND an evaluation metric even if we are not very sure of the evaluation metric since proceeding without a metric is definitely not recommended as it can delay the process of empirical iterations that are needed to tune a model even more. We can always change the metric if & when we learn a better one, which is perfectly okay.
+

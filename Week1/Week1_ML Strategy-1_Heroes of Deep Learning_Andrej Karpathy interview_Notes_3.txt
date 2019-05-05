@@ -1,0 +1,25 @@
+
+
+I think in that respect, I was not surprised that the network could better measure those fine statistics across lots of images. In many cases, I was surprised because some of the images require you to read. It's just a bottle, and you can't see what it is, but it actually tells you what it is in text. And so as a human, I can read it, and it's fine, but the network would have to learn to read to identify the object, because it wasn't obvious from it.
+
+Pre-trained Networks Fine-tuning or Transfer Learning:
+
+So that's one thing that it worked so well on, say, like ImageNet. But what I did not see coming, is that you can take these pretrained networks and that you can transfer. You can fine tune them on arbitrary other tasks. Because now, you're not just solving ImageNet, and you need millions of examples. This also happens to be very general feature extractor, and I think that's a second insight that I think fewer people saw coming. 
+	- There were these papers, they are just locked here. All the things that people have been working on in computer vision. Sync classification, actual recognition, object recognition, base attributes and so on. And people are just crushing each task just by fine tuning the network. And so that, to me, was very surprising.
+
+
+It seems to me like the field will split into two trajectories. 
+
+One will be applied AI, which is just making these neural networks, training them, mostly with supervised learning, potentially unsupervised learning. And getting better, say, image recognizers or something like that. 
+
+The other will be artificial general intelligence directions, which is how do you get neural networks that are entirely dynamical system that thinks and speaks and can do everything that a human can do and as intelligent in that way. 
+
+And I think that what's been interesting is that, for example in computer vision. The way we approached it in the beginning, I think, was wrong in that we tried to break it down by different parts. So we were like, okay, humans recognize people, humans recognize scenes, humans recognize objects. So we're just going to do everything that humans do, and then once we have all those things, and now we have different areas. And once we have all those things, we're going to figure out how to put them together. And I think that was a wrong approach, and we've seen how that played out historically.
+
+And so I think there's something similar that's going on slightly on a higher level with AI. So people are asking, well, okay, people plan, people do experiments to figure out how the world works, or people talk to other people, so we need language. And people are trying to decompose it by function, accomplish each piece, and then put it together into some kind of brain. And I just think it's just incorrect approach. And so what I've been a much bigger fan of is not decomposing that way but having a single kind of neural network that is the complete dynamical system that you're always working with a full agent. And then the question is, how do you actually create objectives such that when you optimize over the weights that make up that brain, you get intelligent behavior out? And so that's been something that I've been thinking about a lot at OpenAI. I think there are a lot of different ways that people have thought about approaching this problem. 
+
+For example, going in a supervised learning direction, I have this essay online. It's not an essay, it's a short story that I wrote. And the short story tries to come up with a hypothetical world of what it might look like if the way we approach this AGI is just by scaling up supervised learning, which we know works. And so that gets into something that looks like Amazon Mechanical Turk where people associates into lots of robot bodies, and they perform tasks, and then we train on that as a supervised learning dataset to imitate humans and what that might look like, and so on. And so then there are other directions, like unsupervised learning from algorithmic information theory, things like AIXI, or from artificial life, things that'll look more like artificial evolution. 
+
+And so that's what I spend my time thinking a lot about. And I think I have the correct answer, but I'm not willing to reveal it here.
+
+

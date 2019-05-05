@@ -1,0 +1,171 @@
+
+Why human-level performance?:
+
+Increasingly in ML we are talking about models having comparable human-level performance as part of model training. There are couple of reasons why,
+
+1. Recent advances in ML in the Big Data DL era have enabled algorithms/models to have much better performance than before. So in a lot of applications its now increasingly possible for algorithms/models to compete or better humans in their performance.
+
+2. The work flow of designing & developing a model in ML is much more efficient when we are trying to do things (build a model) that humans are also good at doing.
+
+In these settings it becomes natural to look at algorithms/models having comparable human-level performance.
+
+Below are couple of details,
+
+If we plot the Accuracy achieved by ML community over Time for a variety of models for problems we see that there is rapid progress in the performance/accuracy leading up (as it approaches) to human-level performance. At then as it continues to progress & surpass human-level performance the pace of progress in accuracy or the slope reduces & slows down. It can still progress on the accuracy but the improvement is much more slower and starts to plateau near a theoretical level of Optimal Performance. This theoretical Optimal Performance limit is called as the Bayesian Optimal Error or Bayesian Error or Bayes Error. 
+
+So as we keep training and build bigger & bigger models with more & more data the performance continues to improve & approaches BUT CANNOT surpass this Bayesian Optimal Performance limit. This is the case for any function that maps X to Y (X -> Y) in that the best possible function mapping X to Y is the Bayes Error. This is the best possible error for any function mapping X -> Y. This cannot be surpassed. 
+
+This means for example with a model for speech recognition where x is the audio clip, if the clip is noisy & of poor quality then its not possible to achieve 100% accuracy since its just impossible for humans or anything to do that. Similarly for image classification if the image is too blurred & of poor quality its not possible to achieve 100% accuracy in the classification.
+
+This is why the accuracy improves but does not surpass a limit after surpassing human-level performance. 
+
+Now there are couple of reasons for the accuracy to improve rapidly as it approaches human-level performance & then slow down after that,
+
+1. First is that humans are already pretty good at these problems that the human-level of performance/accuracy is already pretty close to the Bayes limit leaving very little scope for improvement in the accuracy beyond human-level performance & therefore progress slows.
+
+2. Second is that for performances lower than that of humans through the ML process & certain tools humans can effectively help optimize the model as it improves towards human-level performance but these tools become increasingly difficult to use once we surpass human-level performance/accuracy.
+
+Below are these tools & this is specially applicable for tasks that humans tend to be good at like natural data tasks,
+
+1. Humans can provide labeled training data (X, Y) which can then be used to train the model.
+	- Hire humans to label more data & provide for training.
+
+2. Humans can perform better Bias-Variance Analysis to better tune Bias & Variance.
+	- Even though we understand Bias & Variance by understanding how humans perform (human-level performance) we can gain better intuition on how much to reduce Bias & Variance.
+
+3. So long as Humans can perform better, humans can achieve better insights through Manual Error Analysis.
+	- For misclassified data (predictions) we can have humans analyze it & gain better insights on why a human got it right which can then be used to optimize the model.
+
+
+========
+
+Avoidable bias:
+
+We saw earlier in the 4 step orthogonalization that we want our model to fit the training set well on the cost function. But how well? We want it to fit the training set well but not too well. Knowing the human-level performance/accuracy can help us determine how well to fit. In other words by knowing what the human-level performance is, it is possible to tell when a training set is performing well or not. Below is the intuition,
+
+We saw earlier that Bayes error is the best possible Optimal error performance that a model can achieve & that it may not always be 100%. We also saw that for problems that humans do well on human-level performance is pretty close to the Bayes error & there is not much scope for improvement beyond human performance.
+
+Now lets say we have a classification example where we have a model with Training Error : 8%  & Dev Error : 10%. Lets say given we know humans are pretty good at classification lets say the human-level performance/accuracy is 1% AND same as Bayes.
+
+In this case from the huge difference between the training error & the Bayes/human-level error, which is a measure of the Bias, we can clearly see that the algorithms/models suffers from Bias & underfits the training set when compared to the smaller difference between training & dev set errors. We can then proceed to address the Bias by training a bigger network, train longer & using other optimization algorithms/models, etc.
+
+Now lets say for the above SAME classification example but with a different data set (low resolution) or a different problem we still have a model have the SAME Training Error & Dev Error. But let's say in this case the human-level performance/accuracy is 7.5%.
+
+In this case since we know that human-level performance is pretty close to the Bayes error we use the human-level performance as an estimate of the approximate Bayes error & compare it with the Training set error. With this comparison we suddenly see that the difference between the training error & the approximate Bayes error (approximated based on human-level performance) which is a measure of the Bias is just 0.5. Whereas the difference between the training & dev set errors, which is a measure of the Variance is now 2, which is greater & hence we might need better generalization on the dev set. We can then proceed to address the Variance by adding regularization, training on a larger training set, etc.
+
+Thus we see that by using human-level performance as an estimate of the approximate Bayes Error we take two completely different steps to address Bias & Variance.
+
+This difference between the approximate Bayes Error estimated using human-level performance & the Training Error is what is referred to as "Avoidable Bias". The term signifies that there is a certain threshold which we should aim to address Bias beyond which we might start overfitting the training set.
+
+So rather than saying in the above second case that since the training set error is 8%, the measure of bias is 8% we say that the bias, the avoidable bias is only 0.5%.
+
+There are a lot of nuances when factoring in human-level performance in taking decisions on the course of actions to take & understanding human-level performance is important.
+
+
+=========
+
+Understanding human-level performance:
+
+When trying to define human-level performance for problems we need to decide or be clear on what our goal is in defining it. This is because when defining human-level performance there are multiple possible definitions & what one chooses really depends on what the goal is. Below is an example to illustrate,
+
+Lets take the example of medical image diagnosis classification where we have the below different choices for human-level performances,
+	- 3% error for non-medical user
+	- 1% error for a doctor
+	- 0.75% error for a specialist
+	- 0.5% error for a team of specialists
+
+The definition that we will choose from the above will depend on what our goal or purpose is. If the goal is just to publish a paper or deploy an application it may be okay to choose option 1 & justify that a better performance than a doctor is good for a paper or a deployment. However if the goal is to use the human-level performance as a proxy or estimate of the approximate Bayes error then we might have to choose the best possible error definition that we obtained in option 4. Since though it may be possible to have a better accuracy with an even bigger team the optimal error is at least not greater than 0.5 & hence this definition should be chosen as an estimate for Bayes error.
+
+This becomes more relevant when we are trying to evaluate the Bias & Variance of a model and are using the human-level performance definition as an estimate of the approximate Bayes error as mentioned above to make decisions on Bias & Variance reductions. As we saw earlier, when evaluating Bias & Variance we use the difference between the approximated Bayes error & the training error as an estimate of the Avoidable Bias & the difference between training & dev errors as an estimate of the Variance. Now when we do this if we do not carefully estimate the Bayes error using the correct human-level error definition we might end up with a suboptimal model that suffers from Avoidable Bias & Variance.
+
+This is even more applicable as models approach human-level performance where if we estimate the Bayes error incorrectly using a suboptimal human-level performance definition we may not know how far the model is from the optimal Bayes error & hence may not be able to estimate the Avoidable Bias correctly in order to reduce it.
+
+This is another reason why as models approach human-level performance progress on the accuracy slows down since the Bias-Variance aspects become increasingly difficult to analyze.
+
+So in summary when evaluating Bias & Variance for a model where we have comparable human-level performance estimates since humans are good at it we can use the human-level performance definition as an estimate of approximate Bayes error & use that to estimate Avoidable Bias & Variance to take corresponding Bias & Variance reduction decisions. When we do this since for some problems the Bayes error is not always zero (speech recognition from poor audio source, above medical image diagnosis classification, etc) & for these it becomes important to carefully estimate Bayes error using the correct human-level performance definition to make sure we are able to correctly analyze & act on Avoidable Bias & Variance of the model.
+
+Thus having an accurate estimate of the human-level performance provides us with an estimate of the Bayes error which helps us determine if the model suffers from Avoidable Bias & Variance & act to reduce it. This however becomes difficult as the performance of the model approaches & surpasses human-level performance at which point we no longer have a good estimate of the Bayes error to use to estimate Avoidable Bias & Variance and take necessary actions which is the reason progress on accuracy slows as performance surpasses human-level performance.
+
+One of the exciting developments in deep learning has been that for more and more problems/tasks models are actually able to surpass human-level performance.
+
+
+==========
+
+Surpassing human-level performance:
+
+There are a couple of reasons why it gets increasingly difficult to improve performance/accuracy as a model reaches & surpasses human-level performance.
+
+1. As mentioned earlier we no longer have a good estimate of the Bayes error & as a consequence good estimates of the Avoidable Bias & Variance in the model since we don't know what the Bayesian Optimal Error is. Without this its difficult to know whether the model suffers from avoidable bias or variance to take corresponding actions with various bias & variance reduction techniques.
+
+2. Since the model is performing better than humans do, its no longer possible to rely on human intuition & insight to provide inputs & help tune or improve the model.
+
+This does not mean we cannot make progress, in fact we can still make significant progress but the tools that we use to provide clear direction are no longer useful & hence it makes progress that much more difficult.
+
+Now there are a lot of problems where ML models & systems have significantly surpassed human-level performance/accuracy. Below are some areas,
+
+1. Online Advertising
+2. Product Recommendations
+3. Logistics (transit time predictions)
+4. Financial Loan Processing/Approval
+
+In all the above the themes to note are,
+
+a. The models in these cases learn from Structured Data. 
+	- Data may be from databases or other sources.
+b. The models in these cases have been trained on a huge amount of data (big data)
+	- They are trained on far more data than any human can go over & are therefore able to better understand statistical patterns & trends in the data.
+c. These are Non-Natural Perception problems
+	- They do not deal with natural perception
+	- Problems like Image Recognition, Speech Recognition & NLP where humans are generally very good at.
+
+In all these problems, ML models have significantly surpassed single human-level performance/accuracy.
+
+For Natural Perception problems since humans are pretty good at processing them its been difficult for ML models to surpass human-level performance/accuracy. But increasingly with advances in Deep Learning & Big Data we are seeing models in some cases reaching & surpassing single human-level performance. Below are a few,
+
+1. Speech Recognition cases (voice enabled devices)
+2. Some Image Recognition cases
+3. Medical / Radiology related cases 
+	- ECG, Skin cancer, etc
+	
+In summary, surpassing human-level performance/accuracy has always been difficult but we are seeing that given enough data, modern deep learning systems can reach & surpass human-level performance/accuracy on Single Supervised Learning problems.
+
+
+===========
+
+Improving your model performance:
+
+For any Supervised Learning Algorithm to perform well BOTH of the below two fundamental assumptions will have to be true,
+
+1. Fits the Training Set pretty well. This basically means the Avoidable Bias is pretty low.
+
+2. The Training Set performance/accuracy generalizes pretty well to the Development & Test Sets. This basically means the Variance is pretty low or acceptable.
+
+Now with the spirit of Orthogonality we treat them as separate steps & have separate tools/knobs to address/tune each of the above independently via Bias & Variance reduction techniques.
+
+With the above in mind in order to improve performance of an ML model we need to,
+
+1. Use human-level performance/accuracy as a proxy/estimate of the approximate Bayes error & determine the measure of Avoidable Bias by calculating the difference between the Training Set error & the human-level performance error.
+
+	- Avoidable Bias = Human-level performance/accuracy - Training Set error/accuracy
+	
+	- If the measure of Avoidable Bias is more perform Bias Reduction using the below techniques,
+		a. Train a bigger network/model - More hidden units, hidden layers, etc.
+		b. Train longer and/or use Advanced Optimization Algorithms - Momentum, RMS Prop, Adam, etc.
+		c. Try different Neural Network Architectures and/or Hyper Parameter search - From trying different Activation Functions like RELU, etc to trying other architectures like RNN or CNN to see if it fits well. This may or may not help & is difficult to tell in advance.
+
+2. Compute the difference between the Training Error & the Development or Test error & use it as a measure of Variance.
+
+	- Variance = Development/Test Set error - Training Set error
+	
+	- If the measure of Variance is high perform Variance Reduction using the below techniques,
+		a. Get a bigger training set - Train on bigger training data.
+		b. Perform Regularization - L2 or DropOut Regularization, Data Augmentation, etc.
+		c. Try different Neural Network Architectures and/or Hyper Parameter search - Same as earlier & again may or may not help & hard to tell in advance.
+
+
+In deciding between Bias & Variance reduction below is the guideline,
+
+	- If the difference between human-level error and the training error is bigger than the difference between the training error and the development error, the focus should be on bias reduction techniques.
+
+	- If the difference between training error and the development error is bigger than the difference between the human-level error and the training error, the focus should be on variance reduction techniques.
+

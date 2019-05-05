@@ -1,0 +1,126 @@
+
+Training and testing on different distributions:
+
+In the deep learning era, algorithms are hungry for more & more data and perform better & better with more & more labeled training data. This has resulted in the Training Set becoming much larger & coming from a different distribution than the Development or Test Sets.
+
+Having the training set come from a different distribution than the dev & test sets enables us to have a much larger training set which then enables the algorithms to perform much better.
+
+One important thing to make sure in such cases is that the dev & test sets continue to come from the same distribution, drawn at random from it AND that they contain data that reflects the data that the model is expected to get in the future on deployment & consider important to perform well on. This is because the dev set lets the model have a target to tune/optimize to & the test set enables us to access its performance for confidence of its accuracy.
+
+What this means is that if we have only a small data set of the field data that we care about & want to perform well on but want to have the model train on more data to improve its performance then we can resort to below to gather more data,
+
+1. Collect & setup more labeled training data from other sources like the web
+2. Buy more labeled data (X, Y) from data vendors
+3. Use the relevant data from other related products
+
+Then make sure to use this entire set of collected data for training set ONLY & setup the dev and test sets EXCLUSIVELY with the field data that we care about & want to perform well on.
+
+For example, taking the cat classification example where we need to classify cat images uploaded by users on our app, lets say we only have 10,000 user uploaded low resolution, blurry & not professionally taken labeled images which is the field data that we care about & want to perform well on. Now lets say we collect data as mentioned above & get about 100,000 labeled high quality, professionally taken images. Now the correct way to split this total data set of size 110,000 into train/dev/test sets is, 
+	- Place all 100K of collected data plus half of the 10K user/field data (5K) in Training set totaling 105K.
+	- Split the remaining 5K of user/field data into two halves of size 2500 each & assign each half to the Development & Test Sets so that the dev & test tests contain only user/field data that we care about.
+	- Another way to split is to have the Training Set contain only the 100K collected data & the Development & Test Sets will each have 5K of the user/field data. But the previous option is desirable.
+
+This way of splitting the Training & Development/Test Sets has the advantage of enabling the Training Set to be really large but has the disadvantage that the Training Set is no longer coming from the same distribution as the Development/Test Sets, but this is still better & preferable as it performs better over the long run.
+
+
+==========
+
+Bias and Variance with mismatched data distributions:
+
+Bias-Variance analysis helps to prioritize on next steps to take to improve model performance. However they way we perform Bias-Variance analysis becomes different when we have the training set having a different data distribution than the development & test sets.
+
+When the training & development sets were coming from the same distribution we could confidently conclude that the difference between the training and dev set errors is a measure of the model's Variance. Since they both come from the same distribution & have very similar kind of data with the only difference being that the model wasn't trained on the dev set which was the indicator of how much the model generalizes & hence its Variance.
+
+However when the training set comes from a different distribution than the dev & test tests, its no longer possible to conclude decisively that the difference between the training and dev set errors is a measure of the model's Variance, since between the training & the dev set errors two things change in parallel, one is that the model wasn't trained on the dev set (indicator of variance) while the other is that the dev set contains different data than the training set (indicator of data mismatch). Now it becomes hard to attribute how much of the difference between the training and dev set errors is due to Variance & how much is due to Mismatched data distribution between the training & dev sets.
+
+To tease out the difference when performing bias-variance analysis in such cases we add another data set called Training-Dev Set. The Training-Dev set will come from the same distribution as the Training Set but will not be used in the training of the model. Basically we will randomly shuffle the Training Set and carve out a small portion of it as Training-Dev Set. Only the remaining Training Set will be used for the model training.
+
+Thus, just like the dev & test sets that come from the same distribution, the Training & Training-Dev sets would also be from the same distribution with the difference being that the Training-Dev set would not be used during model training. Now we can confidently conclude that the difference between the Training and Training-Dev errors is a measure of the model's Variance while the difference between the Training-Dev & Development errors can be concluded to be a measure of the Data mismatch (Mismatched data distribution).
+
+Thus we can use the below metrics to clearly attribute Bias & Variance when dealing with Mismatched Training & Development/Test Sets,
+
+1. Human-level performance Error proxy/estimate for Bayes Error
+
+2. Training Error
+
+3. Training-Dev Error
+
+4. Development Error
+
+5. Test Error
+
+The difference between Human-level Error and Training Error as before is a measure of the Avoidable Bias.
+
+The difference between the Training Error and the Training-Dev Error is a measure of the Variance.
+
+The difference between the Training-Dev Error and the Development Error is a measure of the Data Mismatch or Mismatched Data Distribution.
+
+The difference between the Development Error and the Test Error is a measure of the Degree of Overfitting or Variance to the Development Set.
+	- This is strictly not necessarily done as part of Bias-Variance Analysis.
+
+
+With the above metrics we can know conclude decisively if a model suffers from Avoidable Bias, Variance, Data Mismatch, a combination of these or all of these. Since a model can suffer from BOTH Avoidable Bias & Variance along with suffering from Data Mismatch.
+
+Note also that there could be cases where the Development & Test Errors are lower than the Training & Training-Dev Errors since the latter two by virtue of coming from a different distribution might contain more difficult data than the target data set present in the Development/Test Sets.
+
+To understand & deal with such cases a more generalized formalization of the above analysis described below helps,
+
+We basically create a table with the columns being the different data set types (which in our case are collected data & field data) and the rows being the different errors by humans & model (Human-level, Error on examples from the subset the model trained on, Error on examples from the subset the model has NOT trained on). We can then fill this table initially with the above metrics as below,
+
+
+										Collected data			Field data
+
+Human-level								Human-level Error		<Human-level Field Error>
+
+Error on examples trained on			Training Error			<Training Field Error>
+
+Error on examples NOT trained on		Training-Dev Error		Development Error
+
+
+Now the differences between the above errors as described earlier provides estimates of the Avoidable Bias, Variance & Data Mismatch. What is missing is the Human-level error & Training error on examples from the subset of field data that the model has trained on. We fill these two by,
+
+	- Asking humans to perform the task on a field data subset & use it for Human-level error (<Human-level Field Error>).
+	
+	- Find the error corresponding to the subset of field data that was used in the training from the overall training error (if not used in training train with it & then determine the error). Use it for the Training error on examples from the subset of field data that the model trained on (<Training Field Error>).
+
+
+Now we can have a better sense of the Avoidable Bias, Variance & Data Mismatch when comparing these from both the Collected data set and the Field data set that we actually care about.
+
+Though this not provide any direct answers or one clear path forward it does provide us with better insight on the model's performance. So for example, 
+
+Let's say the model has 4% Human-level Error, 7% Training Error, 10% Training-Dev Error but only 7% Development Error. We then find that the <Human-level Field Error> is 6% and the <Training Field Error> is also 6%.
+
+In this case we can conclude that the Training & Training-Dev Sets which mainly consisted of the Collected data set was much more difficult than the actual Field data set that we care about & since the Avoidable Bias and Variance estimates on the Field data (0% and 1% respectively) is very good we can conclude that the model's Bias & Variance is low (despite the differing values on the Collected data).
+
+
+==========
+
+Addressing data mismatch:
+
+If we find on Bias-Variance Analysis described above that we have a sizable Data Mismatch problem (difference between Training-Dev & Development Errors) then there is no well defined, direct way to avoid or reduce it, but doing the below certainly does help a lot,
+
+1. Perform Manual Error Analysis to understand the differences between the Training Set & Development/Test Set data distributions.
+	- To avoid overfitting the Test Set, we perform Manual Error Analysis ONLY on the Development Set and NOT on the Test set.
+	- This will help us better understand the Errors on the Development Set & provide us with insight into the nature of differences between the Training & Development/Test Sets & if how different or difficult the dev/test set is from the training set.
+
+2. Once we understand the nature of difference & mismatch between the Training & Development/Test distributions, 
+
+	- EITHER a. Make the Training Set data more similar to the Development/Test Set data
+	
+	- OR b. Collect more Training data similar to the Development/Test Set data.
+	
+For example taking the voice activated car smart mirror example, if we find that we have sizable data mismatch we perform error analysis and find out that our training data has following differences from the dev set,
+	- Does not have voice samples with car background noise
+		- For this one we can simulate & make our training data voice samples have car background noise though Artificial Data Synthesis.
+	- Does not have lots of street numbers mentioned in the training samples
+		- For this we can buy voice samples with street numbers & names being mentioned & add to our training set.
+
+
+Artificial Data Synthesis:
+	- If we decide to make our training data more similar to the dev/test data, then one of the tools we can use is Artificial Data Synthesis.
+	- Here we make the training data simulate the data from dev/test set by synthesizing it using the training data & processing it. 
+		- Taking the previous example we take the 10K hours of our training data voice samples & take some hours of car back ground noise and mix them together to make the voice samples have the car background noise.
+	- A note of caution here is that we should be careful when we are synthesizing in such way & make sure that the synthetic data that we add/mix is sufficiently scaled to cover a sizable range of the data values. This is needed to make sure that our model does not overfit to the synthetic data being added/mixed. 
+		- Taking the previous example if we mix 100K hours of training data voice samples with just 1 hr of car background noise by repeating it 100K times then we might end up overfitting our model to the 1 hr of car background noise & may not generalize to the various different types of background noises that can occur in a car. 
+		- Another example is taking a few car graphics images from car games & using it to train a model to fit boxes around cars for car navigation, here again since the car games don't have more than a few cars it does not represent the entire range of cars in the real world.
+
